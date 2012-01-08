@@ -283,7 +283,7 @@ public class Board implements Iterable<Cell> {
     if (fixedCell != null) {
       final int number = fixedCell.getNumber();
       final String numberString = Integer.toString(number);
-      addChars(sb, ' ', cellWidth - numberString.length());
+      addChars(sb, cell.isFixed() ? ' ' : '-', cellWidth - numberString.length());
       sb.append(numberString);
     }
     else {
@@ -301,7 +301,7 @@ public class Board implements Iterable<Cell> {
 
   @Override
   public String toString() {
-    final int cellWidth = Math.max(Integer.toString(getMaxNumber()).length(), 2);
+    final int cellWidth = Integer.toString(getMaxNumber()).length() + 1;
 
     final StringBuilder sb = new StringBuilder();
     addSeparatorLine(sb, cellWidth);
