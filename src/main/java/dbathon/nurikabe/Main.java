@@ -12,6 +12,7 @@ public class Main {
     final BoardState boardState = new BoardState(board);
     System.out.println(boardState);
     board.getCell(1, 1).setWhite();
+    board.getCell(1, 0).setBlack();
     System.out.println(board);
     boardState.restoreState();
     System.out.println(board);

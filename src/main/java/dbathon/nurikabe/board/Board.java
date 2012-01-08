@@ -6,6 +6,7 @@ public class Board {
   private final int height;
 
   private final int solutionWhiteCount;
+  private final int maxNumber;
 
   private final Cell[] cells;
 
@@ -15,6 +16,7 @@ public class Board {
 
     cells = new Cell[getCellCount()];
     int numberSum = 0;
+    final int maxNum = 0;
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
         final int number = boardBuilder.getNumber(x, y);
@@ -35,6 +37,7 @@ public class Board {
       throw new IllegalArgumentException("solution impossible, to many expected white cells");
     }
     solutionWhiteCount = numberSum;
+    maxNumber = maxNum;
   }
 
   private int coordsToIndex(int x, int y) {
@@ -87,14 +90,59 @@ public class Board {
     return result;
   }
 
+  public int getMaxNumber() {
+    return maxNumber;
+  }
+
+  private void addChars(StringBuilder sb, char c, int count) {
+    for (int i = 0; i < count; ++i) {
+      sb.append(c);
+    }
+  }
+
+  private void addSeparatorLine(StringBuilder sb, int cellWidth) {
+    sb.append('+');
+    for (int i = 0; i < getWidth(); ++i) {
+      addChars(sb, '-', cellWidth);
+      sb.append('+');
+    }
+  }
+
+  private void addCell(StringBuilder sb, Cell cell, int cellWidth) {
+    final FixedCell fixedCell = cell.getFixedCell();
+    if (fixedCell != null) {
+      final int number = fixedCell.getNumber();
+      final String numberString = Integer.toString(number);
+      addChars(sb, ' ', cellWidth - numberString.length());
+      sb.append(numberString);
+    }
+    else {
+      if (cell.isWhite()) {
+        addChars(sb, ' ', cellWidth);
+      }
+      else if (cell.isBlack()) {
+        addChars(sb, '#', cellWidth);
+      }
+      else {
+        addChars(sb, '-', cellWidth);
+      }
+    }
+  }
+
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("Board(" + width + ", " + height + "):");
-    for (int x = 0; x < width; ++x) {
-      sb.append('\n');
-      for (int y = 0; y < height; ++y) {
-        sb.append(' ').append(getCell(x, y));
+    final int cellWidth = Math.max(Integer.toString(getMaxNumber()).length(), 2);
+
+    final StringBuilder sb = new StringBuilder();
+    addSeparatorLine(sb, cellWidth);
+    for (int x = 0; x < getWidth(); ++x) {
+      sb.append("\n|");
+      for (int y = 0; y < getHeight(); ++y) {
+        addCell(sb, getCell(x, y), cellWidth);
+        sb.append('|');
       }
+      sb.append('\n');
+      addSeparatorLine(sb, cellWidth);
     }
     return sb.toString();
   }
