@@ -16,6 +16,28 @@ public class Main {
     System.out.println(board);
     boardState.restoreState();
     System.out.println(board);
+
+    final Board board2 = BoardUtil.parseStringToBoard("2:2:.1..");
+    System.out.println(board2);
+    System.out.println(board2.isSolution());
+    board2.getCell(0, 0).setBlack();
+    System.out.println(board2.isSolution());
+    board2.getCell(1, 0).setBlack();
+    System.out.println(board2.isSolution());
+    board2.getCell(1, 1).setBlack();
+    System.out.println(board2.isSolution());
+    System.out.println(board2);
+
+    final Board board3 = BoardUtil.parseStringToBoard("2:2:.4..");
+    System.out.println(board3);
+    System.out.println(board3.isSolution());
+    board3.getCell(0, 0).setWhite();
+    System.out.println(board3.isSolution());
+    board3.getCell(1, 0).setWhite();
+    System.out.println(board3.isSolution());
+    board3.getCell(1, 1).setWhite();
+    System.out.println(board3.isSolution());
+    System.out.println(board3);
   }
 
 }
