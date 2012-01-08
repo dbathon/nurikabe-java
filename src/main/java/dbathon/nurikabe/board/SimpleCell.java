@@ -23,8 +23,8 @@ public class SimpleCell extends Cell {
 
   @Override
   public void setWhite() {
-    setUnknown();
     white = true;
+    black = false;
   }
 
   @Override
@@ -32,14 +32,24 @@ public class SimpleCell extends Cell {
     return black;
   }
 
+  private IllegalArgumentException fixedCellException() {
+    return new IllegalArgumentException("only white cells can be associated with a fixed cell");
+  }
+
   @Override
   public void setBlack() {
-    setUnknown();
+    if (getFixedCell() != null) {
+      throw fixedCellException();
+    }
+    white = false;
     black = true;
   }
 
   @Override
   public void setUnknown() {
+    if (getFixedCell() != null) {
+      throw fixedCellException();
+    }
     white = false;
     black = false;
   }
@@ -51,6 +61,9 @@ public class SimpleCell extends Cell {
 
   @Override
   public void setFixedCell(FixedCell fixedCell) {
+    if (!isWhite() && fixedCell != null) {
+      throw fixedCellException();
+    }
     this.fixedCell = fixedCell;
   }
 
