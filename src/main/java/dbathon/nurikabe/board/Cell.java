@@ -48,4 +48,16 @@ public abstract class Cell {
 
   public abstract void setFixedCell(FixedCell fixedCell);
 
+  public boolean isNeighbor(Cell cell) {
+    if (getBoard() == cell.getBoard()) {
+      if (getX() == cell.getX()) {
+        return Math.abs(getY() - cell.getY()) == 1;
+      }
+      else if (getY() == cell.getY()) {
+        return Math.abs(getX() - cell.getX()) == 1;
+      }
+    }
+    return false;
+  }
+
 }
