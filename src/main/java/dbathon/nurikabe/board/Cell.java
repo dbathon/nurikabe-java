@@ -60,4 +60,31 @@ public abstract class Cell {
     return false;
   }
 
+  public CellColor getColor() {
+    if (isBlack()) {
+      return CellColor.BLACK;
+    }
+    else if (isWhite()) {
+      return CellColor.WHITE;
+    }
+    else {
+      return CellColor.UNKNOWN;
+    }
+  }
+
+  public void setColor(CellColor cellColor) {
+    if (cellColor == CellColor.BLACK) {
+      setBlack();
+    }
+    else if (cellColor == CellColor.WHITE) {
+      setWhite();
+    }
+    else if (cellColor == CellColor.UNKNOWN) {
+      setUnknown();
+    }
+    else {
+      throw new IllegalArgumentException("unexpected cellColor: " + cellColor);
+    }
+  }
+
 }

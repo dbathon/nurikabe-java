@@ -86,18 +86,10 @@ public class Board implements Iterable<Cell> {
     return getCellCount() - getSolutionWhiteCount();
   }
 
-  public int getWhiteCount() {
+  public int getCount(CellColor cellColor) {
     int result = 0;
     for (final Cell cell : cells) {
-      if (cell.isWhite()) ++result;
-    }
-    return result;
-  }
-
-  public int getBlackCount() {
-    int result = 0;
-    for (final Cell cell : cells) {
-      if (cell.isBlack()) ++result;
+      if (cell.getColor() == cellColor) ++result;
     }
     return result;
   }
@@ -155,7 +147,7 @@ public class Board implements Iterable<Cell> {
     }
   }
 
-  public Map<FixedCell, Set<Cell>> getWhiteGroups() {
+  public Map<FixedCell, Set<Cell>> getWhiteGroupsWithFixedCell() {
     connectWhiteCells();
 
     final Map<FixedCell, Set<Cell>> result = new HashMap<FixedCell, Set<Cell>>();
@@ -174,40 +166,41 @@ public class Board implements Iterable<Cell> {
   }
 
   /**
-   * Recursively search all connected black cells.
+   * Recursively search all connected cells.
    */
-  private void findBlackGroup(Cell blackCell, Set<Cell> result) {
-    result.add(blackCell);
-    for (final Cell neighbor : getNeighbors(blackCell)) {
-      if (neighbor.isBlack() && !result.contains(neighbor)) {
-        findBlackGroup(neighbor, result);
+  private void findConnectedCells(Cell cell, Set<Cell> result) {
+    result.add(cell);
+    for (final Cell neighbor : getNeighbors(cell)) {
+      if (neighbor.getColor() == cell.getColor() && !result.contains(neighbor)) {
+        findConnectedCells(neighbor, result);
       }
     }
   }
 
-  public Set<Set<Cell>> getBlackGroups() {
-    final Set<Cell> blackCells = new HashSet<Cell>();
+  public Set<Set<Cell>> getGroups(CellColor cellColor) {
+    final Set<Cell> cellsWithColor = new HashSet<Cell>();
     for (final Cell cell : cells) {
-      if (cell.isBlack()) {
-        blackCells.add(cell);
+      if (cell.getColor() == cellColor) {
+        cellsWithColor.add(cell);
       }
     }
-    final Set<Set<Cell>> result = new HashSet<Set<Cell>>();
 
-    while (!blackCells.isEmpty()) {
+    final Set<Set<Cell>> result = new HashSet<Set<Cell>>();
+    while (!cellsWithColor.isEmpty()) {
       final Set<Cell> group = new HashSet<Cell>();
-      final Cell startCell = blackCells.iterator().next();
-      findBlackGroup(startCell, group);
+      final Cell startCell = cellsWithColor.iterator().next();
+      findConnectedCells(startCell, group);
       result.add(group);
 
-      blackCells.removeAll(group);
+      cellsWithColor.removeAll(group);
     }
 
     return result;
   }
 
   public boolean isSolution() {
-    if (getSolutionWhiteCount() != getWhiteCount() || getSolutionBlackCount() != getBlackCount()) {
+    if (getSolutionWhiteCount() != getCount(CellColor.WHITE)
+        || getSolutionBlackCount() != getCount(CellColor.BLACK)) {
       return false;
     }
     connectWhiteCells();
@@ -220,7 +213,7 @@ public class Board implements Iterable<Cell> {
     }
 
     // all white groups are complete
-    final Map<FixedCell, Set<Cell>> whiteGroups = getWhiteGroups();
+    final Map<FixedCell, Set<Cell>> whiteGroups = getWhiteGroupsWithFixedCell();
     for (final Entry<FixedCell, Set<Cell>> entry : whiteGroups.entrySet()) {
       if (entry.getKey().getNumber() != entry.getValue().size()) {
         return false;
@@ -240,7 +233,7 @@ public class Board implements Iterable<Cell> {
     }
 
     // at most one black groups
-    if (getBlackGroups().size() > 1) {
+    if (getGroups(CellColor.BLACK).size() > 1) {
       return false;
     }
 
@@ -260,6 +253,7 @@ public class Board implements Iterable<Cell> {
     return true;
   }
 
+  @Override
   public Iterator<Cell> iterator() {
     return Arrays.asList(cells).iterator();
   }

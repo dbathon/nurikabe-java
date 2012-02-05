@@ -14,7 +14,7 @@ public class HullStrategy implements SolverStrategy {
 
   @Override
   public void improveSolution(Board board) {
-    for (final Entry<FixedCell, Set<Cell>> entry : board.getWhiteGroups().entrySet()) {
+    for (final Entry<FixedCell, Set<Cell>> entry : board.getWhiteGroupsWithFixedCell().entrySet()) {
       final FixedCell fixedCell = entry.getKey();
       final Set<Cell> cells = entry.getValue();
       if (fixedCell.getNumber() == cells.size()) {

@@ -2,6 +2,7 @@ package dbathon.nurikabe.solver.strategy;
 
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
+import dbathon.nurikabe.board.CellColor;
 import dbathon.nurikabe.solver.SolverStrategy;
 
 /**
@@ -12,7 +13,7 @@ public class FillupStrategy implements SolverStrategy {
 
   @Override
   public void improveSolution(Board board) {
-    if (board.getBlackCount() == board.getSolutionBlackCount()) {
+    if (board.getCount(CellColor.BLACK) == board.getSolutionBlackCount()) {
       // make every unknown cell white
       for (final Cell cell : board) {
         if (cell.isUnknown()) {
@@ -20,7 +21,7 @@ public class FillupStrategy implements SolverStrategy {
         }
       }
     }
-    else if (board.getWhiteCount() == board.getSolutionWhiteCount()) {
+    else if (board.getCount(CellColor.WHITE) == board.getSolutionWhiteCount()) {
       // make every unknown cell black
       for (final Cell cell : board) {
         if (cell.isUnknown()) {
