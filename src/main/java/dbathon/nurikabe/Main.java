@@ -46,6 +46,16 @@ public class Main {
         BoardUtil.parseStringToBoard("9:9:..............4.......3.3.3.........9.......3.........2.3.4.......7..............");
 
     trySolve(solver, board4);
+    System.out.println("=================================================================");
+
+    // a small hint...
+    board4.getCell(7, 1).setBlack();
+    trySolve(solver, board4);
+    System.out.println("=================================================================");
+
+    // another small hint...
+    board4.getCell(6, 7).setBlack();
+    trySolve(solver, board4);
   }
 
   private static class LoggingEvents implements SolverEvents {
