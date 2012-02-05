@@ -299,9 +299,9 @@ public class Board implements Iterable<Cell> {
 
     final StringBuilder sb = new StringBuilder();
     addSeparatorLine(sb, cellWidth);
-    for (int x = 0; x < getWidth(); ++x) {
+    for (int y = 0; y < getHeight(); ++y) {
       sb.append("\n|");
-      for (int y = 0; y < getHeight(); ++y) {
+      for (int x = 0; x < getWidth(); ++x) {
         addCell(sb, getCell(x, y), cellWidth);
         sb.append('|');
       }

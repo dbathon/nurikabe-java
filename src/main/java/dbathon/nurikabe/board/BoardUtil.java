@@ -35,8 +35,8 @@ public final class BoardUtil {
     final BoardBuilder result = new BoardBuilder(width, height);
 
     final Matcher cellMatcher = CELL_PATTERN.matcher(matcher.group(3));
-    for (int x = 0; x < width; ++x) {
-      for (int y = 0; y < height; ++y) {
+    for (int y = 0; y < height; ++y) {
+      for (int x = 0; x < width; ++x) {
         if (!cellMatcher.find()) {
           throw new IllegalArgumentException("no data for cell " + x + ", " + y);
         }
