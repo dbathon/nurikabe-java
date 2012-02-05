@@ -1,5 +1,4 @@
 solver strategies:
-* hull: if a white group is complete all neighboring cells must be black
 * unreachable unknown cells -> black
 * unknown cells having neighbours with different non-null FixedCells -> black
 * impossible white?: if the cell was white, then no solution possible -> black

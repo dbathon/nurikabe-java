@@ -8,6 +8,7 @@ import dbathon.nurikabe.solver.Solver;
 import dbathon.nurikabe.solver.SolverEvents;
 import dbathon.nurikabe.solver.SolverStrategy;
 import dbathon.nurikabe.solver.strategy.FillupStrategy;
+import dbathon.nurikabe.solver.strategy.HullStrategy;
 
 public class Main {
 
@@ -23,7 +24,7 @@ public class Main {
     System.out.println(board);
 
     final SolverStrategy[] strategies = {
-      new FillupStrategy()
+        new HullStrategy(), new FillupStrategy()
     };
 
     final Solver solver = new Solver(Arrays.asList(strategies));
@@ -33,6 +34,13 @@ public class Main {
 
     final Board board3 = BoardUtil.parseStringToBoard("2:2:.4..");
     trySolve(solver, board3);
+
+    trySolve(solver, board);
+
+    final Board board4 =
+        BoardUtil.parseStringToBoard("9:9:..............4.......3.3.3.........9.......3.........2.3.4.......7..............");
+
+    trySolve(solver, board4);
   }
 
   private static class LoggingEvents implements SolverEvents {
