@@ -9,6 +9,7 @@ import dbathon.nurikabe.solver.SolverEvents;
 import dbathon.nurikabe.solver.SolverStrategy;
 import dbathon.nurikabe.solver.strategy.FillupStrategy;
 import dbathon.nurikabe.solver.strategy.HullStrategy;
+import dbathon.nurikabe.solver.strategy.NonConnectedWhiteNeighborsStrategy;
 
 public class Main {
 
@@ -24,7 +25,7 @@ public class Main {
     System.out.println(board);
 
     final SolverStrategy[] strategies = {
-        new HullStrategy(), new FillupStrategy()
+        new HullStrategy(), new NonConnectedWhiteNeighborsStrategy(), new FillupStrategy()
     };
 
     final Solver solver = new Solver(Arrays.asList(strategies));

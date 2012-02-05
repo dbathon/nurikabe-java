@@ -1,6 +1,5 @@
 solver strategies:
 * unreachable unknown cells -> black
-* unknown cells having neighbours with different non-null FixedCells -> black
 * impossible white?: if the cell was white, then no solution possible -> black
 * expand: if a group (white or black) is not complete and there is only one cell where it could expand, then that cell must belong to the group
 * 2x2 block with three black -> remaining is white
