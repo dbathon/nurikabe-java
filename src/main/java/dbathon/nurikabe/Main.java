@@ -7,6 +7,7 @@ import dbathon.nurikabe.board.BoardUtil;
 import dbathon.nurikabe.solver.Solver;
 import dbathon.nurikabe.solver.SolverEvents;
 import dbathon.nurikabe.solver.SolverStrategy;
+import dbathon.nurikabe.solver.strategy.ExpandStrategy;
 import dbathon.nurikabe.solver.strategy.FillupStrategy;
 import dbathon.nurikabe.solver.strategy.HullStrategy;
 import dbathon.nurikabe.solver.strategy.NonConnectedWhiteNeighborsStrategy;
@@ -24,9 +25,11 @@ public class Main {
     boardState.restoreState();
     System.out.println(board);
 
-    final SolverStrategy[] strategies = {
-        new HullStrategy(), new NonConnectedWhiteNeighborsStrategy(), new FillupStrategy()
-    };
+    final SolverStrategy[] strategies =
+        {
+            new HullStrategy(), new NonConnectedWhiteNeighborsStrategy(), new ExpandStrategy(),
+            new FillupStrategy()
+        };
 
     final Solver solver = new Solver(Arrays.asList(strategies));
 
