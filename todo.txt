@@ -1,4 +1,3 @@
 solver strategies:
 * unreachable unknown cells -> black
 * impossible white?: if the cell was white, then no solution possible -> black
-* 2x2 block with three black -> remaining is white

@@ -10,6 +10,7 @@ import dbathon.nurikabe.solver.SolverStrategy;
 import dbathon.nurikabe.solver.strategy.ExpandStrategy;
 import dbathon.nurikabe.solver.strategy.FillupStrategy;
 import dbathon.nurikabe.solver.strategy.HullStrategy;
+import dbathon.nurikabe.solver.strategy.NoBlackBlockStrategy;
 import dbathon.nurikabe.solver.strategy.NonConnectedWhiteNeighborsStrategy;
 
 public class Main {
@@ -28,7 +29,7 @@ public class Main {
     final SolverStrategy[] strategies =
         {
             new HullStrategy(), new NonConnectedWhiteNeighborsStrategy(), new ExpandStrategy(),
-            new FillupStrategy()
+            new NoBlackBlockStrategy(), new FillupStrategy()
         };
 
     final Solver solver = new Solver(Arrays.asList(strategies));
