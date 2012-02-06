@@ -1,3 +1,2 @@
 solver strategies:
-* unreachable unknown cells -> black
 * impossible white?: if the cell was white, then no solution possible -> black

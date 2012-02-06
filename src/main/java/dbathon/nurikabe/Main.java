@@ -9,9 +9,9 @@ import dbathon.nurikabe.solver.SolverEvents;
 import dbathon.nurikabe.solver.SolverStrategy;
 import dbathon.nurikabe.solver.strategy.ExpandStrategy;
 import dbathon.nurikabe.solver.strategy.FillupStrategy;
-import dbathon.nurikabe.solver.strategy.HullStrategy;
 import dbathon.nurikabe.solver.strategy.NoBlackBlockStrategy;
 import dbathon.nurikabe.solver.strategy.NonConnectedWhiteNeighborsStrategy;
+import dbathon.nurikabe.solver.strategy.ReachabilityStrategy;
 
 public class Main {
 
@@ -28,8 +28,8 @@ public class Main {
 
     final SolverStrategy[] strategies =
         {
-            new HullStrategy(), new NonConnectedWhiteNeighborsStrategy(), new ExpandStrategy(),
-            new NoBlackBlockStrategy(), new FillupStrategy()
+            new ReachabilityStrategy(), new NonConnectedWhiteNeighborsStrategy(),
+            new ExpandStrategy(), new NoBlackBlockStrategy(), new FillupStrategy()
         };
 
     final Solver solver = new Solver(Arrays.asList(strategies));
@@ -50,11 +50,6 @@ public class Main {
 
     // a small hint...
     board4.getCell(7, 1).setBlack();
-    trySolve(solver, board4);
-    System.out.println("=================================================================");
-
-    // another small hint...
-    board4.getCell(6, 7).setBlack();
     trySolve(solver, board4);
   }
 
