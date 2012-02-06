@@ -2,6 +2,8 @@ package dbathon.nurikabe.board;
 
 /**
  * Can be used to save and later restore a particular state of a {@link Board}.
+ * <p>
+ * TODO: potential problem, if a cell with set fixed cell is to be restored to unknown...
  */
 public class BoardState {
 
