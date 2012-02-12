@@ -7,10 +7,9 @@ import dbathon.nurikabe.board.BoardUtil;
 import dbathon.nurikabe.solver.Solver;
 import dbathon.nurikabe.solver.SolverEvents;
 import dbathon.nurikabe.solver.SolverStrategy;
+import dbathon.nurikabe.solver.strategy.AllValidIslandsStrategy;
 import dbathon.nurikabe.solver.strategy.ExpandStrategy;
-import dbathon.nurikabe.solver.strategy.FillupStrategy;
 import dbathon.nurikabe.solver.strategy.NoBlackBlockStrategy;
-import dbathon.nurikabe.solver.strategy.ReachabilityStrategy;
 
 public class Main {
 
@@ -25,11 +24,9 @@ public class Main {
     boardState.restoreState();
     System.out.println(board);
 
-    final SolverStrategy[] strategies =
-        {
-            new ReachabilityStrategy(), new ExpandStrategy(), new NoBlackBlockStrategy(),
-            new FillupStrategy()
-        };
+    final SolverStrategy[] strategies = {
+        new AllValidIslandsStrategy(), new ExpandStrategy(), new NoBlackBlockStrategy(),
+    };
 
     final Solver solver = new Solver(Arrays.asList(strategies));
 
@@ -50,6 +47,20 @@ public class Main {
     // a small hint...
     board4.getCell(7, 1).setBlack();
     trySolve(solver, board4);
+
+    test(solver,
+        "9:9:..2.......5...............1.....5.3...........2.5.....3...............1.......3..");
+
+    test(solver,
+        "9:9:............6....7.......6....6...................2....1.......2....2............");
+
+    test(solver,
+        "9:9:....6...3............4.............4.5.....5.2.............2............5...1....");
+  }
+
+  private static void test(Solver solver, String boardString) {
+    final Board board = BoardUtil.parseStringToBoard(boardString);
+    trySolve(solver, board);
   }
 
   private static class LoggingEvents implements SolverEvents {
