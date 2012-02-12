@@ -1,6 +1,7 @@
 package dbathon.nurikabe;
 
 import java.util.Arrays;
+import java.util.Locale;
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.BoardState;
 import dbathon.nurikabe.board.BoardUtil;
@@ -68,16 +69,16 @@ public class Main {
     @Override
     public void onBeginSolve(Board board, Solver solver) {
       lastState = new BoardState(board);
-      // System.out.println("beginning to solve:\n" + board);
     }
 
     @Override
-    public void onStrategyExecuted(Board board, SolverStrategy strategy, Solver solver) {
+    public void onStrategyExecuted(Board board, SolverStrategy strategy, long nanos, Solver solver) {
       final BoardState newState = new BoardState(board);
-      if (!newState.equals(lastState)) {
-        // System.out.println("solution improved by " + strategy + ":\n" + board);
-        lastState = newState;
-      }
+      final boolean improved = !newState.equals(lastState);
+      System.out.println((improved ? "+ " : "- ")
+          + String.format(Locale.ROOT, "%7.2f ", (nanos / 1000000d))
+          + strategy.getClass().getSimpleName());
+      lastState = newState;
     }
 
   }

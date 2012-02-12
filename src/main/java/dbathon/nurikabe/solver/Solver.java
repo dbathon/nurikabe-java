@@ -29,9 +29,11 @@ public class Solver {
       final BoardState beforeState = new BoardState(board);
 
       for (final SolverStrategy strategy : strategies) {
+        final long startNanos = System.nanoTime();
         strategy.improveSolution(board);
+        final long nanos = System.nanoTime() - startNanos;
         for (final SolverEvents events : solverEvents) {
-          events.onStrategyExecuted(board, strategy, this);
+          events.onStrategyExecuted(board, strategy, nanos, this);
         }
       }
 

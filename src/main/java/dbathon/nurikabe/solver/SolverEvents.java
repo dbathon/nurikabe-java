@@ -6,6 +6,6 @@ public interface SolverEvents {
 
   void onBeginSolve(Board board, Solver solver);
 
-  void onStrategyExecuted(Board board, SolverStrategy strategy, Solver solver);
+  void onStrategyExecuted(Board board, SolverStrategy strategy, long nanos, Solver solver);
 
 }
