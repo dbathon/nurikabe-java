@@ -8,6 +8,7 @@ import dbathon.nurikabe.solver.Solver;
 import dbathon.nurikabe.solver.SolverEvents;
 import dbathon.nurikabe.solver.SolverStrategy;
 import dbathon.nurikabe.solver.strategy.AllValidIslandsStrategy;
+import dbathon.nurikabe.solver.strategy.BlackConnectStrategy;
 import dbathon.nurikabe.solver.strategy.ExpandStrategy;
 import dbathon.nurikabe.solver.strategy.NoBlackBlockStrategy;
 
@@ -34,9 +35,11 @@ public class Main {
     boardState.restoreState();
     System.out.println(board);
 
-    final SolverStrategy[] strategies = {
-        new AllValidIslandsStrategy(), new ExpandStrategy(), new NoBlackBlockStrategy(),
-    };
+    final SolverStrategy[] strategies =
+        {
+            new AllValidIslandsStrategy(), new ExpandStrategy(), new NoBlackBlockStrategy(),
+            new BlackConnectStrategy()
+        };
 
     final Solver solver = new Solver(Arrays.asList(strategies));
 
