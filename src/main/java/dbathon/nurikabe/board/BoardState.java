@@ -1,34 +1,27 @@
 package dbathon.nurikabe.board;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Can be used to save and later restore a particular state of a {@link Board}.
- * <p>
- * TODO: potential problem, if a cell with set fixed cell is to be restored to unknown...
  */
 public class BoardState {
 
   private final Board board;
-  private final String state;
+  private final List<CellColor> colors = new ArrayList<CellColor>();
+  private final List<FixedCell> fixedCells = new ArrayList<FixedCell>();
 
   public BoardState(Board board) {
     this.board = board;
 
-    final StringBuilder sb = new StringBuilder(board.getCellCount());
     for (int x = 0; x < board.getWidth(); ++x) {
       for (int y = 0; y < board.getHeight(); ++y) {
         final Cell cell = board.getCell(x, y);
-        if (cell.isWhite()) {
-          sb.append('w');
-        }
-        else if (cell.isBlack()) {
-          sb.append('b');
-        }
-        else {
-          sb.append('?');
-        }
+        colors.add(cell.getColor());
+        fixedCells.add(cell.getFixedCell());
       }
     }
-    state = sb.toString();
   }
 
   public Board getBoard() {
@@ -40,18 +33,17 @@ public class BoardState {
     for (int x = 0; x < board.getWidth(); ++x) {
       for (int y = 0; y < board.getHeight(); ++y) {
         final Cell cell = board.getCell(x, y);
-        switch (state.charAt(index)) {
-        case 'w':
-          cell.setWhite();
-          break;
-        case 'b':
-          cell.setBlack();
-          break;
-        case '?':
-          cell.setUnknown();
-          break;
-        default:
-          throw new IllegalStateException("unexpected char in " + state);
+        final CellColor color = colors.get(index);
+        final FixedCell fixedCell = fixedCells.get(index);
+        if (fixedCell != null) {
+          // first set the color
+          cell.setColor(color);
+          cell.setFixedCell(fixedCell);
+        }
+        else {
+          // first set the fixed cell
+          cell.setFixedCell(fixedCell);
+          cell.setColor(color);
         }
         ++index;
       }
@@ -63,7 +55,8 @@ public class BoardState {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((board == null) ? 0 : board.hashCode());
-    result = prime * result + ((state == null) ? 0 : state.hashCode());
+    result = prime * result + ((colors == null) ? 0 : colors.hashCode());
+    result = prime * result + ((fixedCells == null) ? 0 : fixedCells.hashCode());
     return result;
   }
 
@@ -77,16 +70,24 @@ public class BoardState {
       if (other.board != null) return false;
     }
     else if (!board.equals(other.board)) return false;
-    if (state == null) {
-      if (other.state != null) return false;
+    if (colors == null) {
+      if (other.colors != null) return false;
     }
-    else if (!state.equals(other.state)) return false;
+    else if (!colors.equals(other.colors)) return false;
+    if (fixedCells == null) {
+      if (other.fixedCells != null) return false;
+    }
+    else if (!fixedCells.equals(other.fixedCells)) return false;
     return true;
   }
 
   @Override
   public String toString() {
-    return "BoardState(" + state + ")";
+    final StringBuilder sb = new StringBuilder("BoardState(");
+    for (final CellColor color : colors) {
+      sb.append(color.name().charAt(0));
+    }
+    return sb.append(")").toString();
   }
 
 }
