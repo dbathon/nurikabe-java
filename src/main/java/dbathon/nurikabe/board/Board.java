@@ -272,8 +272,11 @@ public class Board implements Iterable<Cell> {
     }
   }
 
-  private void addCell(StringBuilder sb, Cell cell, int cellWidth) {
-    final FixedCell fixedCell = cell.getFixedCell();
+  private void addCell(StringBuilder sb, Cell cell, int cellWidth, boolean showFixedCells) {
+    FixedCell fixedCell = cell.getFixedCell();
+    if (!showFixedCells && fixedCell != cell) {
+      fixedCell = null;
+    }
     if (fixedCell != null) {
       final int number = fixedCell.getNumber();
       final String numberString = Integer.toString(number);
@@ -293,8 +296,7 @@ public class Board implements Iterable<Cell> {
     }
   }
 
-  @Override
-  public String toString() {
+  public String toString(boolean showFixedCells) {
     final int cellWidth = Integer.toString(getMaxNumber()).length() + 1;
 
     final StringBuilder sb = new StringBuilder();
@@ -302,13 +304,18 @@ public class Board implements Iterable<Cell> {
     for (int y = 0; y < getHeight(); ++y) {
       sb.append("\n|");
       for (int x = 0; x < getWidth(); ++x) {
-        addCell(sb, getCell(x, y), cellWidth);
+        addCell(sb, getCell(x, y), cellWidth, showFixedCells);
         sb.append('|');
       }
       sb.append('\n');
       addSeparatorLine(sb, cellWidth);
     }
     return sb.toString();
+  }
+
+  @Override
+  public String toString() {
+    return toString(false);
   }
 
 }
