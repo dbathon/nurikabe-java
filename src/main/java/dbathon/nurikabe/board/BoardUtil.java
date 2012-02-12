@@ -12,6 +12,8 @@ public final class BoardUtil {
 
   private static final Pattern CELL_PATTERN = Pattern.compile("[0-9]+|\\.");
 
+  private static final Pattern CELL_PATTERN_SINGLE = Pattern.compile("[0-9]|\\.");
+
   /**
    * Format is "&lt;width&gt;:&lt;height&gt;:&lt;cells&gt;", where cells is a string consisting of
    * <code>width * height</code> "cells", a cell is either a dot ('.') or a number, the cells can be
@@ -25,7 +27,7 @@ public final class BoardUtil {
    * 9:9:...6..........3...............6....2.1.....3.3....5...............2..........1...
    * </pre>
    */
-  public static BoardBuilder parseStringToBoardBuilder(String puzzleString) {
+  public static BoardBuilder parseStringToBoardBuilder(String puzzleString, boolean singleDigitOnly) {
     final Matcher matcher = VALIDATE_PATTERN.matcher(puzzleString);
     if (!matcher.matches()) {
       throw new IllegalArgumentException("illegal puzzle string: " + puzzleString);
@@ -34,7 +36,8 @@ public final class BoardUtil {
     final int height = Integer.parseInt(matcher.group(2));
     final BoardBuilder result = new BoardBuilder(width, height);
 
-    final Matcher cellMatcher = CELL_PATTERN.matcher(matcher.group(3));
+    final Matcher cellMatcher =
+        (singleDigitOnly ? CELL_PATTERN_SINGLE : CELL_PATTERN).matcher(matcher.group(3));
     for (int y = 0; y < height; ++y) {
       for (int x = 0; x < width; ++x) {
         if (!cellMatcher.find()) {
@@ -57,10 +60,10 @@ public final class BoardUtil {
   }
 
   /**
-   * See {@link #parseStringToBoardBuilder(String)}.
+   * See {@link #parseStringToBoardBuilder(String, boolean)}.
    */
-  public static Board parseStringToBoard(String puzzleString) {
-    return new Board(parseStringToBoardBuilder(puzzleString));
+  public static Board parseStringToBoard(String puzzleString, boolean singleDigitOnly) {
+    return new Board(parseStringToBoardBuilder(puzzleString, singleDigitOnly));
   }
 
 }
