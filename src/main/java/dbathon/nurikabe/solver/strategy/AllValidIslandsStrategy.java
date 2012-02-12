@@ -3,6 +3,7 @@ package dbathon.nurikabe.solver.strategy;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -99,12 +100,14 @@ public class AllValidIslandsStrategy implements SolverStrategy {
     final Set<Set<Cell>> result = new HashSet<Set<Cell>>();
     final Set<Cell> startCells = new HashSet<Cell>();
     startCells.add(fixedCell);
-    generateValidIslandsRecursive(fixedCell, requiredCells, startCells, result);
+    generateValidIslandsRecursive(fixedCell, requiredCells, startCells, new HashSet<Set<Cell>>(),
+        new HashMap<Cell, Set<Cell>>(), result);
     return result;
   }
 
   private void generateValidIslandsRecursive(FixedCell fixedCell, Set<Cell> requiredCells,
-      Set<Cell> currentCells, Set<Set<Cell>> result) {
+      Set<Cell> currentCells, Set<Set<Cell>> currentCellsSeen,
+      Map<Cell, Set<Cell>> validNeighborsCache, Set<Set<Cell>> result) {
     if (fixedCell.getNumber() == currentCells.size()) {
       // potential valid island
       if (currentCells.containsAll(requiredCells)) {
@@ -114,12 +117,17 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       return;
     }
 
+    if (currentCellsSeen.contains(currentCells)) {
+      return;
+    }
+    else {
+      currentCellsSeen.add(new HashSet<Cell>(currentCells));
+    }
+
     // recurse for each possible "neighbor"
-    final Board board = fixedCell.getBoard();
-    final Set<Cell> currentCellsCopy = new HashSet<Cell>(currentCells);
     final Set<Cell> doneNeighbors = new HashSet<Cell>();
-    for (final Cell cell : currentCells) {
-      neighbors: for (final Cell neighbor : board.getNeighbors(cell)) {
+    for (final Cell cell : currentCells.toArray(new Cell[currentCells.size()])) {
+      for (final Cell neighbor : getValidNeghbors(cell, fixedCell, validNeighborsCache)) {
         if (doneNeighbors.contains(neighbor)) {
           // already seen...
           continue;
@@ -128,25 +136,48 @@ public class AllValidIslandsStrategy implements SolverStrategy {
           doneNeighbors.add(neighbor);
         }
 
-        if (!neighbor.isBlack()
-            && (neighbor.getFixedCell() == null || neighbor.getFixedCell().equals(fixedCell))
-            && !currentCells.contains(neighbor)) {
+        if (!currentCells.contains(neighbor)) {
+          // "expand" into neighbor
+          currentCells.add(neighbor);
+          generateValidIslandsRecursive(fixedCell, requiredCells, currentCells, currentCellsSeen,
+              validNeighborsCache, result);
+          currentCells.remove(neighbor);
+        }
+      }
+    }
+  }
+
+  private Set<Cell> getValidNeghbors(Cell cell, FixedCell fixedCell,
+      Map<Cell, Set<Cell>> validNeighborsCache) {
+    Set<Cell> result = validNeighborsCache.get(cell);
+    if (result == null) {
+      final Board board = cell.getBoard();
+      result = new HashSet<Cell>(board.getNeighbors(cell));
+
+      // remove those that are not valid
+      final Iterator<Cell> iterator = result.iterator();
+      while (iterator.hasNext()) {
+        final Cell neighbor = iterator.next();
+        if (neighbor.isBlack()
+            || (neighbor.getFixedCell() != null && !neighbor.getFixedCell().equals(fixedCell))) {
+          iterator.remove();
+        }
+        else {
           // check if any neighbor has a different fixed cell
           for (final Cell neighborNeighbor : board.getNeighbors(neighbor)) {
             if (neighborNeighbor.getFixedCell() != null
                 && !neighborNeighbor.getFixedCell().equals(fixedCell)) {
               // neighboring different fixed cells are not possible
-              continue neighbors;
+              iterator.remove();
+              break;
             }
           }
-
-          // "expand" into neighbor
-          currentCellsCopy.add(neighbor);
-          generateValidIslandsRecursive(fixedCell, requiredCells, currentCellsCopy, result);
-          currentCellsCopy.remove(neighbor);
         }
       }
+
+      validNeighborsCache.put(cell, result);
     }
+    return result;
   }
 
 }

@@ -70,14 +70,14 @@ public class Main {
     @Override
     public void onBeginSolve(Board board, Solver solver) {
       lastState = new BoardState(board);
-      System.out.println("beginning to solve:\n" + board);
+      // System.out.println("beginning to solve:\n" + board);
     }
 
     @Override
     public void onStrategyExecuted(Board board, SolverStrategy strategy, Solver solver) {
       final BoardState newState = new BoardState(board);
       if (!newState.equals(lastState)) {
-        System.out.println("solution improved by " + strategy + ":\n" + board);
+        // System.out.println("solution improved by " + strategy + ":\n" + board);
         lastState = newState;
       }
     }
@@ -86,8 +86,10 @@ public class Main {
 
   private static void trySolve(Solver solver, Board board) {
     System.out.println("-------------------------------------------------");
+    System.out.println(board);
     System.out.println("try solve: "
         + solver.tryToSolve(board, Arrays.<SolverEvents>asList(new LoggingEvents())));
+    System.out.println(board);
   }
 
 }
