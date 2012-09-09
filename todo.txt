@@ -1,2 +1,3 @@
 solver strategies:
-* impossible white?: if the cell was white, then no solution possible -> black
+* impossible white?: if the cell was white, then no solution possible, e.g. it isolates a black group -> black
+* AllValidIslandsStrategy: also consider the border cells that are in every valid island and make them black...
