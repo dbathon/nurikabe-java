@@ -12,6 +12,7 @@ import dbathon.nurikabe.solver.strategy.AllValidIslandsStrategy;
 import dbathon.nurikabe.solver.strategy.BlackConnectStrategy;
 import dbathon.nurikabe.solver.strategy.ExpandStrategy;
 import dbathon.nurikabe.solver.strategy.NoBlackBlockStrategy;
+import dbathon.nurikabe.solver.strategy.TwoAndBlackStrategy;
 
 public class Main {
 
@@ -170,7 +171,7 @@ public class Main {
     final SolverStrategy[] strategies =
         {
             new AllValidIslandsStrategy(), new ExpandStrategy(), new NoBlackBlockStrategy(),
-            new BlackConnectStrategy()
+            new BlackConnectStrategy(), new TwoAndBlackStrategy()
         };
 
     final Solver solver = new Solver(Arrays.asList(strategies));
