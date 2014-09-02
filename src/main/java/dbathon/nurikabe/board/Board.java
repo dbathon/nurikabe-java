@@ -89,7 +89,9 @@ public class Board implements Iterable<Cell> {
   public int getCount(CellColor cellColor) {
     int result = 0;
     for (final Cell cell : cells) {
-      if (cell.getColor() == cellColor) ++result;
+      if (cell.getColor() == cellColor) {
+        ++result;
+      }
     }
     return result;
   }

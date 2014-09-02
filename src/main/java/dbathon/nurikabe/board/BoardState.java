@@ -62,22 +62,40 @@ public class BoardState {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) return true;
-    if (obj == null) return false;
-    if (getClass() != obj.getClass()) return false;
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
     final BoardState other = (BoardState) obj;
     if (board == null) {
-      if (other.board != null) return false;
+      if (other.board != null) {
+        return false;
+      }
     }
-    else if (!board.equals(other.board)) return false;
+    else if (!board.equals(other.board)) {
+      return false;
+    }
     if (colors == null) {
-      if (other.colors != null) return false;
+      if (other.colors != null) {
+        return false;
+      }
     }
-    else if (!colors.equals(other.colors)) return false;
+    else if (!colors.equals(other.colors)) {
+      return false;
+    }
     if (fixedCells == null) {
-      if (other.fixedCells != null) return false;
+      if (other.fixedCells != null) {
+        return false;
+      }
     }
-    else if (!fixedCells.equals(other.fixedCells)) return false;
+    else if (!fixedCells.equals(other.fixedCells)) {
+      return false;
+    }
     return true;
   }
 

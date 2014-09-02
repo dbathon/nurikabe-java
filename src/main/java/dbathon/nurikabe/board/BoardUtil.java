@@ -7,8 +7,8 @@ public final class BoardUtil {
 
   private BoardUtil() {}
 
-  private static final Pattern VALIDATE_PATTERN =
-      Pattern.compile("([0-9]+):([0-9]+):([0-9\\.\\s]+)");
+  private static final Pattern VALIDATE_PATTERN = Pattern
+      .compile("([0-9]+):([0-9]+):([0-9\\.\\s]+)");
 
   private static final Pattern CELL_PATTERN = Pattern.compile("[0-9]+|\\.");
 

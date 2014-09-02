@@ -2,6 +2,7 @@ package dbathon.nurikabe;
 
 import java.util.Arrays;
 import java.util.Locale;
+
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.BoardState;
 import dbathon.nurikabe.board.BoardUtil;
@@ -162,8 +163,7 @@ public class Main {
       ".2..............1.8...............3...2...3...3...............5.4..............4.",
       "........45..........6....5.............3.6.............2....2..........41........",
       "..........3......5.......5..4..1.................1..5..4.......1......4..........",
-      "........43.........5......6...........4...1...........6......3.........16........",
-  };
+      "........43.........5......6...........4...1...........6......3.........16........" };
 
   public static void main(String[] args) {
     final Board board = BoardUtil.parseStringToBoard("5:5:.... 3.  .7.... ..... 2 ..1....", true);
@@ -177,10 +177,8 @@ public class Main {
     System.out.println(board);
 
     final SolverStrategy[] strategies =
-        {
-            new AllValidIslandsStrategy(), new ExpandStrategy(), new NoBlackBlockStrategy(),
-            new BlackConnectStrategy(), new TwoAndBlackStrategy()
-        };
+        { new AllValidIslandsStrategy(), new ExpandStrategy(), new NoBlackBlockStrategy(),
+            new BlackConnectStrategy(), new TwoAndBlackStrategy() };
 
     final Solver solver = new Solver(Arrays.asList(strategies));
 
