@@ -1,7 +1,8 @@
 package dbathon.nurikabe.solver.strategy;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
 import dbathon.nurikabe.board.CellColor;
@@ -44,14 +45,10 @@ public class ExpandStrategy implements SolverStrategy {
   }
 
   private boolean tryExpand(Board board, Set<Cell> group, CellColor cellColor) {
-    final Set<Cell> unknownNeighbors = new HashSet<Cell>();
-    for (final Cell cell : group) {
-      for (final Cell neighbor : board.getNeighbors(cell)) {
-        if (neighbor.isUnknown()) {
-          unknownNeighbors.add(neighbor);
-        }
-      }
-    }
+    final Set<Cell> unknownNeighbors =
+        group.stream().flatMap(cell -> board.getNeighbors(cell).filter(Cell::isUnknown))
+            .collect(Collectors.toSet());
+
     if (unknownNeighbors.size() == 1) {
       unknownNeighbors.iterator().next().setColor(cellColor);
       return true;

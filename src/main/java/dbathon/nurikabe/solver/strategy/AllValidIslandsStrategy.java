@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
 import dbathon.nurikabe.board.FixedCell;
@@ -152,7 +153,7 @@ public class AllValidIslandsStrategy implements SolverStrategy {
     Set<Cell> result = validNeighborsCache.get(cell);
     if (result == null) {
       final Board board = cell.getBoard();
-      result = new HashSet<Cell>(board.getNeighbors(cell));
+      result = new HashSet<Cell>(board.getNeighborsSet(cell));
 
       // remove those that are not valid
       final Iterator<Cell> iterator = result.iterator();
@@ -164,7 +165,7 @@ public class AllValidIslandsStrategy implements SolverStrategy {
         }
         else {
           // check if any neighbor has a different fixed cell
-          for (final Cell neighborNeighbor : board.getNeighbors(neighbor)) {
+          for (final Cell neighborNeighbor : board.getNeighborsSet(neighbor)) {
             if (neighborNeighbor.getFixedCell() != null
                 && !neighborNeighbor.getFixedCell().equals(fixedCell)) {
               // neighboring different fixed cells are not possible

@@ -11,6 +11,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
+
 public class Board implements Iterable<Cell> {
 
   private final int width;
@@ -21,6 +24,8 @@ public class Board implements Iterable<Cell> {
 
   private final Cell[] cells;
   private final List<Cell> cellsListView;
+
+  private final List<Set<Cell>> neighborSets;
 
   public Board(BoardBuilder boardBuilder) {
     width = boardBuilder.getWidth();
@@ -52,6 +57,25 @@ public class Board implements Iterable<Cell> {
     }
     solutionWhiteCount = numberSum;
     maxNumber = maxNum;
+
+    neighborSets = cellsListView.stream().map(cell -> {
+      final int x = cell.getX();
+      final int y = cell.getY();
+      final Builder<Cell> builder = ImmutableSet.<Cell>builder();
+      if (isLegalCoord(x + 1, y)) {
+        builder.add(getCell(x + 1, y));
+      }
+      if (isLegalCoord(x - 1, y)) {
+        builder.add(getCell(x - 1, y));
+      }
+      if (isLegalCoord(x, y + 1)) {
+        builder.add(getCell(x, y + 1));
+      }
+      if (isLegalCoord(x, y - 1)) {
+        builder.add(getCell(x, y - 1));
+      }
+      return builder.build();
+    }).collect(Collectors.toList());
   }
 
   private int coordsToIndex(int x, int y) {
@@ -116,35 +140,22 @@ public class Board implements Iterable<Cell> {
     return maxNumber;
   }
 
-  public Set<Cell> getNeighbors(Cell cell) {
+  public Set<Cell> getNeighborsSet(Cell cell) {
     if (cell.getBoard() != this) {
       throw new IllegalArgumentException("cell");
     }
-    final Set<Cell> result = new HashSet<Cell>();
 
-    final int x = cell.getX();
-    final int y = cell.getY();
-    if (isLegalCoord(x + 1, y)) {
-      result.add(getCell(x + 1, y));
-    }
-    if (isLegalCoord(x - 1, y)) {
-      result.add(getCell(x - 1, y));
-    }
-    if (isLegalCoord(x, y + 1)) {
-      result.add(getCell(x, y + 1));
-    }
-    if (isLegalCoord(x, y - 1)) {
-      result.add(getCell(x, y - 1));
-    }
+    return neighborSets.get(coordsToIndex(cell.getX(), cell.getY()));
+  }
 
-    return result;
+  public Stream<Cell> getNeighbors(Cell cell) {
+    return getNeighborsSet(cell).stream();
   }
 
   private void connectWhiteCell(Cell cell) {
     final FixedCell fixedCell = cell.getFixedCell();
     if (fixedCell != null) {
-      getNeighbors(cell).stream()
-          .filter(neighbor -> neighbor.isWhite() && neighbor.getFixedCell() == null)
+      getNeighbors(cell).filter(neighbor -> neighbor.isWhite() && neighbor.getFixedCell() == null)
           .forEach(neighbor -> {
             neighbor.setFixedCell(fixedCell);
             connectWhiteCell(neighbor);
@@ -168,11 +179,9 @@ public class Board implements Iterable<Cell> {
    */
   private void findConnectedCells(Cell cell, Set<Cell> result) {
     result.add(cell);
-    for (final Cell neighbor : getNeighbors(cell)) {
-      if (neighbor.getColor() == cell.getColor() && !result.contains(neighbor)) {
-        findConnectedCells(neighbor, result);
-      }
-    }
+    getNeighbors(cell).filter(neighbor -> neighbor.getColor() == cell.getColor())
+        .filter(neighbor -> !result.contains(neighbor))
+        .forEach(neighbor -> findConnectedCells(neighbor, result));
   }
 
   public Set<Set<Cell>> getGroups(CellColor cellColor) {
@@ -220,10 +229,9 @@ public class Board implements Iterable<Cell> {
     for (final Cell cell : cells) {
       final FixedCell fixedCell = cell.getFixedCell();
       if (fixedCell != null) {
-        for (final Cell neighbor : getNeighbors(cell)) {
-          if (neighbor.getFixedCell() != null && neighbor.getFixedCell() != fixedCell) {
-            return false;
-          }
+        if (getNeighbors(cell).allMatch(
+            neighbor -> neighbor.getFixedCell() != null && neighbor.getFixedCell() != fixedCell)) {
+          return false;
         }
       }
     }

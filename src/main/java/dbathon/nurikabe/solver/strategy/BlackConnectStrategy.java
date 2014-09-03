@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
 import dbathon.nurikabe.board.CellColor;
@@ -25,11 +26,8 @@ public class BlackConnectStrategy implements SolverStrategy {
     for (final Set<Cell> blackGroup : blackGroups) {
       final Set<Cell> unknownNeighbors = new HashSet<Cell>();
       for (final Cell blackCell : blackGroup) {
-        for (final Cell neighbor : board.getNeighbors(blackCell)) {
-          if (neighbor.isUnknown()) {
-            unknownNeighbors.add(neighbor);
-          }
-        }
+        board.getNeighbors(blackCell).filter(Cell::isUnknown)
+            .forEach(neighbor -> unknownNeighbors.add(neighbor));
       }
 
       for (final Cell unknownNeighbor : unknownNeighbors) {
@@ -54,7 +52,7 @@ public class BlackConnectStrategy implements SolverStrategy {
         // already done
         continue;
       }
-      for (final Cell neighbor : board.getNeighbors(current)) {
+      for (final Cell neighbor : board.getNeighborsSet(current)) {
         if (neighbor.isBlack() && !blackGroup.contains(neighbor)) {
           // we found a path to another black group
           return true;
