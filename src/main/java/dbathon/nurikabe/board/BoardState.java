@@ -9,8 +9,8 @@ import java.util.List;
 public class BoardState {
 
   private final Board board;
-  private final List<CellColor> colors = new ArrayList<CellColor>();
-  private final List<FixedCell> fixedCells = new ArrayList<FixedCell>();
+  private final List<CellColor> colors = new ArrayList<>();
+  private final List<FixedCell> fixedCells = new ArrayList<>();
 
   public BoardState(Board board) {
     this.board = board;

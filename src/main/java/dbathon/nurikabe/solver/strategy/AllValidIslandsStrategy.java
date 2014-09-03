@@ -35,7 +35,7 @@ public class AllValidIslandsStrategy implements SolverStrategy {
     board.connectWhiteCells();
 
     // for each cell, from which fixed cells it can be reached
-    final Map<Cell, Set<FixedCell>> reachableMap = new HashMap<Cell, Set<FixedCell>>();
+    final Map<Cell, Set<FixedCell>> reachableMap = new HashMap<>();
     for (final Cell cell : board) {
       if (!cell.isBlack()) {
         reachableMap.put(cell, new HashSet<FixedCell>());
@@ -56,10 +56,10 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       }
       else {
         Set<Cell> inAllIslands = null;
-        final Set<Cell> inSomeIslands = new HashSet<Cell>();
+        final Set<Cell> inSomeIslands = new HashSet<>();
         for (final Set<Cell> validIsland : validIslands) {
           if (inAllIslands == null) {
-            inAllIslands = new HashSet<Cell>(validIsland);
+            inAllIslands = new HashSet<>(validIsland);
           }
           else {
             inAllIslands.retainAll(validIsland);
@@ -98,8 +98,8 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       // already complete
       return Collections.singleton(requiredCells);
     }
-    final Set<Set<Cell>> result = new HashSet<Set<Cell>>();
-    final Set<Cell> startCells = new HashSet<Cell>();
+    final Set<Set<Cell>> result = new HashSet<>();
+    final Set<Cell> startCells = new HashSet<>();
     startCells.add(fixedCell);
     generateValidIslandsRecursive(fixedCell, requiredCells, startCells, new HashSet<Set<Cell>>(),
         new HashMap<Cell, Set<Cell>>(), result);
@@ -113,7 +113,7 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       // potential valid island
       if (currentCells.containsAll(requiredCells)) {
         // add a copy to result (because the caller might modify currentCells
-        result.add(new HashSet<Cell>(currentCells));
+        result.add(new HashSet<>(currentCells));
       }
       return;
     }
@@ -122,11 +122,11 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       return;
     }
     else {
-      currentCellsSeen.add(new HashSet<Cell>(currentCells));
+      currentCellsSeen.add(new HashSet<>(currentCells));
     }
 
     // recurse for each possible "neighbor"
-    final Set<Cell> doneNeighbors = new HashSet<Cell>();
+    final Set<Cell> doneNeighbors = new HashSet<>();
     for (final Cell cell : currentCells.toArray(new Cell[currentCells.size()])) {
       for (final Cell neighbor : getValidNeghbors(cell, fixedCell, validNeighborsCache)) {
         if (doneNeighbors.contains(neighbor)) {
@@ -153,7 +153,7 @@ public class AllValidIslandsStrategy implements SolverStrategy {
     Set<Cell> result = validNeighborsCache.get(cell);
     if (result == null) {
       final Board board = cell.getBoard();
-      result = new HashSet<Cell>(board.getNeighborsSet(cell));
+      result = new HashSet<>(board.getNeighborsSet(cell));
 
       // remove those that are not valid
       final Iterator<Cell> iterator = result.iterator();

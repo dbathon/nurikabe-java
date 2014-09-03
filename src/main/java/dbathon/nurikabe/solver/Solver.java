@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.BoardState;
 
@@ -12,7 +13,7 @@ public class Solver {
   private final List<SolverStrategy> strategies;
 
   public Solver(List<SolverStrategy> strategies) {
-    this.strategies = new ArrayList<SolverStrategy>(strategies);
+    this.strategies = new ArrayList<>(strategies);
   }
 
   /**

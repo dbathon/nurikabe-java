@@ -185,16 +185,16 @@ public class Board implements Iterable<Cell> {
   }
 
   public Set<Set<Cell>> getGroups(CellColor cellColor) {
-    final Set<Cell> cellsWithColor = new HashSet<Cell>();
+    final Set<Cell> cellsWithColor = new HashSet<>();
     for (final Cell cell : cells) {
       if (cell.getColor() == cellColor) {
         cellsWithColor.add(cell);
       }
     }
 
-    final Set<Set<Cell>> result = new HashSet<Set<Cell>>();
+    final Set<Set<Cell>> result = new HashSet<>();
     while (!cellsWithColor.isEmpty()) {
-      final Set<Cell> group = new HashSet<Cell>();
+      final Set<Cell> group = new HashSet<>();
       final Cell startCell = cellsWithColor.iterator().next();
       findConnectedCells(startCell, group);
       result.add(group);

@@ -2,6 +2,7 @@ package dbathon.nurikabe.solver.strategy;
 
 import java.util.Arrays;
 import java.util.List;
+
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
 import dbathon.nurikabe.board.CellColor;
