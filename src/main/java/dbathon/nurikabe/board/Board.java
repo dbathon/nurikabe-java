@@ -1,12 +1,15 @@
 package dbathon.nurikabe.board;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Board implements Iterable<Cell> {
 
@@ -17,12 +20,15 @@ public class Board implements Iterable<Cell> {
   private final int maxNumber;
 
   private final Cell[] cells;
+  private final List<Cell> cellsListView;
 
   public Board(BoardBuilder boardBuilder) {
     width = boardBuilder.getWidth();
     height = boardBuilder.getHeight();
 
     cells = new Cell[getCellCount()];
+    cellsListView = Collections.unmodifiableList(Arrays.asList(cells));
+
     int numberSum = 0;
     final int maxNum = 0;
     for (int x = 0; x < width; ++x) {
@@ -86,14 +92,24 @@ public class Board implements Iterable<Cell> {
     return getCellCount() - getSolutionWhiteCount();
   }
 
+  public Stream<Cell> getCells() {
+    return cellsListView.stream();
+  }
+
+  public Stream<Cell> getWhiteCells() {
+    return getCells().filter(cell -> cell.isWhite());
+  }
+
+  public Stream<Cell> getBlackCells() {
+    return getCells().filter(cell -> cell.isBlack());
+  }
+
+  public Stream<Cell> getUnknownCells() {
+    return getCells().filter(cell -> cell.isUnknown());
+  }
+
   public int getCount(CellColor cellColor) {
-    int result = 0;
-    for (final Cell cell : cells) {
-      if (cell.getColor() == cellColor) {
-        ++result;
-      }
-    }
-    return result;
+    return (int) getCells().filter(cell -> cell.getColor() == cellColor).count();
   }
 
   public int getMaxNumber() {
@@ -124,47 +140,27 @@ public class Board implements Iterable<Cell> {
     return result;
   }
 
-  public void connectWhiteCells() {
-    int changes = 0;
-    while (true) {
-      for (final Cell cell : cells) {
-        if (cell.isWhite() && cell.getFixedCell() == null) {
-          for (final Cell neighbor : getNeighbors(cell)) {
-            if (neighbor.getFixedCell() != null) {
-              cell.setFixedCell(neighbor.getFixedCell());
-              ++changes;
-              break;
-            }
-          }
-        }
-      }
-      if (changes == 0) {
-        // done
-        return;
-      }
-      else {
-        // try again, maybe there are more changes possible now
-        changes = 0;
-      }
+  private void connectWhiteCell(Cell cell) {
+    final FixedCell fixedCell = cell.getFixedCell();
+    if (fixedCell != null) {
+      getNeighbors(cell).stream()
+          .filter(neighbor -> neighbor.isWhite() && neighbor.getFixedCell() == null)
+          .forEach(neighbor -> {
+            neighbor.setFixedCell(fixedCell);
+            connectWhiteCell(neighbor);
+          });
     }
+  }
+
+  public void connectWhiteCells() {
+    getWhiteCells().forEach(this::connectWhiteCell);
   }
 
   public Map<FixedCell, Set<Cell>> getWhiteGroupsWithFixedCell() {
     connectWhiteCells();
 
-    final Map<FixedCell, Set<Cell>> result = new HashMap<FixedCell, Set<Cell>>();
-    for (final Cell cell : cells) {
-      final FixedCell fixedCell = cell.getFixedCell();
-      if (fixedCell != null) {
-        Set<Cell> groupCells = result.get(fixedCell);
-        if (groupCells == null) {
-          groupCells = new HashSet<Cell>();
-          result.put(fixedCell, groupCells);
-        }
-        groupCells.add(cell);
-      }
-    }
-    return result;
+    return getCells().filter(cell -> cell.getFixedCell() != null).collect(
+        Collectors.groupingBy(Cell::getFixedCell, Collectors.toSet()));
   }
 
   /**
@@ -208,10 +204,8 @@ public class Board implements Iterable<Cell> {
     connectWhiteCells();
 
     // no non-connected white cells
-    for (final Cell cell : cells) {
-      if (cell.isWhite() && cell.getFixedCell() == null) {
-        return false;
-      }
+    if (getWhiteCells().anyMatch(cell -> cell.getFixedCell() == null)) {
+      return false;
     }
 
     // all white groups are complete
@@ -257,7 +251,7 @@ public class Board implements Iterable<Cell> {
 
   @Override
   public Iterator<Cell> iterator() {
-    return Arrays.asList(cells).iterator();
+    return cellsListView.iterator();
   }
 
   private void addChars(StringBuilder sb, char c, int count) {
