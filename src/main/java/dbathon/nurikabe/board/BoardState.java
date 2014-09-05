@@ -1,27 +1,66 @@
 package dbathon.nurikabe.board;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Can be used to save and later restore a particular state of a {@link Board}.
  */
 public class BoardState {
 
+  private static class CellState {
+    final Cell cell;
+    final CellColor color;
+    final FixedCell fixedCell;
+
+    public CellState(Cell cell, CellColor color, FixedCell fixedCell) {
+      this.cell = cell;
+      this.color = color;
+      this.fixedCell = fixedCell;
+    }
+
+    void restore() {
+      if (fixedCell != null) {
+        // first set the color
+        cell.setColor(color);
+        cell.setFixedCell(fixedCell);
+      }
+      else {
+        // first set the fixed cell
+        cell.setFixedCell(fixedCell);
+        cell.setColor(color);
+      }
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(cell, color, fixedCell);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null || getClass() != obj.getClass()) {
+        return false;
+      }
+      final CellState other = (CellState) obj;
+      return cell.equals(other.cell) && color == other.color
+          && Objects.equals(fixedCell, other.fixedCell);
+    }
+  }
+
   private final Board board;
-  private final List<CellColor> colors = new ArrayList<>();
-  private final List<FixedCell> fixedCells = new ArrayList<>();
+  private final List<CellState> cellStates;
 
   public BoardState(Board board) {
     this.board = board;
 
-    for (int x = 0; x < board.getWidth(); ++x) {
-      for (int y = 0; y < board.getHeight(); ++y) {
-        final Cell cell = board.getCell(x, y);
-        colors.add(cell.getColor());
-        fixedCells.add(cell.getFixedCell());
-      }
-    }
+    cellStates =
+        board.getCells().map(cell -> new CellState(cell, cell.getColor(), cell.getFixedCell()))
+            .collect(Collectors.toList());
   }
 
   public Board getBoard() {
@@ -29,35 +68,12 @@ public class BoardState {
   }
 
   public void restoreState() {
-    int index = 0;
-    for (int x = 0; x < board.getWidth(); ++x) {
-      for (int y = 0; y < board.getHeight(); ++y) {
-        final Cell cell = board.getCell(x, y);
-        final CellColor color = colors.get(index);
-        final FixedCell fixedCell = fixedCells.get(index);
-        if (fixedCell != null) {
-          // first set the color
-          cell.setColor(color);
-          cell.setFixedCell(fixedCell);
-        }
-        else {
-          // first set the fixed cell
-          cell.setFixedCell(fixedCell);
-          cell.setColor(color);
-        }
-        ++index;
-      }
-    }
+    cellStates.stream().forEach(CellState::restore);
   }
 
   @Override
   public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((board == null) ? 0 : board.hashCode());
-    result = prime * result + ((colors == null) ? 0 : colors.hashCode());
-    result = prime * result + ((fixedCells == null) ? 0 : fixedCells.hashCode());
-    return result;
+    return Objects.hash(board, cellStates);
   }
 
   @Override
@@ -65,47 +81,17 @@ public class BoardState {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
     final BoardState other = (BoardState) obj;
-    if (board == null) {
-      if (other.board != null) {
-        return false;
-      }
-    }
-    else if (!board.equals(other.board)) {
-      return false;
-    }
-    if (colors == null) {
-      if (other.colors != null) {
-        return false;
-      }
-    }
-    else if (!colors.equals(other.colors)) {
-      return false;
-    }
-    if (fixedCells == null) {
-      if (other.fixedCells != null) {
-        return false;
-      }
-    }
-    else if (!fixedCells.equals(other.fixedCells)) {
-      return false;
-    }
-    return true;
+    return board.equals(other.board) && cellStates.equals(other.cellStates);
   }
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("BoardState(");
-    for (final CellColor color : colors) {
-      sb.append(color.name().charAt(0));
-    }
-    return sb.append(")").toString();
+    return cellStates.stream().map(cellState -> cellState.color.getShortName())
+        .collect(Collectors.joining("", "BoardState(", ")"));
   }
 
 }
