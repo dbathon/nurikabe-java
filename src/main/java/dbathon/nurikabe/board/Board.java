@@ -22,7 +22,7 @@ public class Board implements Iterable<Cell> {
   private final int solutionWhiteCount;
   private final int maxNumber;
 
-  private final Cell[] cells;
+  final Cell[] cells;
   private final List<Cell> cellsListView;
 
   private final List<Set<Cell>> neighborSets;
@@ -78,7 +78,7 @@ public class Board implements Iterable<Cell> {
     }).collect(Collectors.toList());
   }
 
-  private int coordsToIndex(int x, int y) {
+  int coordsToIndex(int x, int y) {
     if (x < 0 || x >= width) {
       throw new IllegalArgumentException("x");
     }
@@ -185,7 +185,7 @@ public class Board implements Iterable<Cell> {
   }
 
   public Set<Set<Cell>> getGroups(CellColor cellColor) {
-    final Set<Cell> cellsWithColor = new HashSet<>();
+    final Set<Cell> cellsWithColor = new CellSet(this);
     for (final Cell cell : cells) {
       if (cell.getColor() == cellColor) {
         cellsWithColor.add(cell);
@@ -194,7 +194,7 @@ public class Board implements Iterable<Cell> {
 
     final Set<Set<Cell>> result = new HashSet<>();
     while (!cellsWithColor.isEmpty()) {
-      final Set<Cell> group = new HashSet<>();
+      final Set<Cell> group = new CellSet(this);
       final Cell startCell = cellsWithColor.iterator().next();
       findConnectedCells(startCell, group);
       result.add(group);

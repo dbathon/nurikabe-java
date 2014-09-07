@@ -10,6 +10,7 @@ import java.util.Set;
 
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
+import dbathon.nurikabe.board.CellSet;
 import dbathon.nurikabe.board.FixedCell;
 import dbathon.nurikabe.solver.SolverStrategy;
 
@@ -56,10 +57,10 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       }
       else {
         Set<Cell> inAllIslands = null;
-        final Set<Cell> inSomeIslands = new HashSet<>();
+        final Set<Cell> inSomeIslands = new CellSet(board);
         for (final Set<Cell> validIsland : validIslands) {
           if (inAllIslands == null) {
-            inAllIslands = new HashSet<>(validIsland);
+            inAllIslands = new CellSet(validIsland);
           }
           else {
             inAllIslands.retainAll(validIsland);
@@ -99,7 +100,7 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       return Collections.singleton(requiredCells);
     }
     final Set<Set<Cell>> result = new HashSet<>();
-    final Set<Cell> startCells = new HashSet<>();
+    final Set<Cell> startCells = new CellSet(fixedCell.getBoard());
     startCells.add(fixedCell);
     generateValidIslandsRecursive(fixedCell, requiredCells, startCells, new HashSet<Set<Cell>>(),
         new HashMap<Cell, Set<Cell>>(), result);
@@ -113,7 +114,7 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       // potential valid island
       if (currentCells.containsAll(requiredCells)) {
         // add a copy to result (because the caller might modify currentCells
-        result.add(new HashSet<>(currentCells));
+        result.add(new CellSet(currentCells));
       }
       return;
     }
@@ -122,11 +123,11 @@ public class AllValidIslandsStrategy implements SolverStrategy {
       return;
     }
     else {
-      currentCellsSeen.add(new HashSet<>(currentCells));
+      currentCellsSeen.add(new CellSet(currentCells));
     }
 
     // recurse for each possible "neighbor"
-    final Set<Cell> doneNeighbors = new HashSet<>();
+    final Set<Cell> doneNeighbors = new CellSet(fixedCell.getBoard());
     for (final Cell cell : currentCells.toArray(new Cell[currentCells.size()])) {
       for (final Cell neighbor : getValidNeghbors(cell, fixedCell, validNeighborsCache)) {
         if (doneNeighbors.contains(neighbor)) {
@@ -153,7 +154,7 @@ public class AllValidIslandsStrategy implements SolverStrategy {
     Set<Cell> result = validNeighborsCache.get(cell);
     if (result == null) {
       final Board board = cell.getBoard();
-      result = new HashSet<>(board.getNeighborsSet(cell));
+      result = new CellSet(board.getNeighborsSet(cell));
 
       // remove those that are not valid
       final Iterator<Cell> iterator = result.iterator();

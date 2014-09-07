@@ -1,13 +1,13 @@
 package dbathon.nurikabe.solver.strategy;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
 import dbathon.nurikabe.board.CellColor;
+import dbathon.nurikabe.board.CellSet;
 import dbathon.nurikabe.solver.SolverStrategy;
 
 /**
@@ -24,7 +24,7 @@ public class BlackConnectStrategy implements SolverStrategy {
       return;
     }
     for (final Set<Cell> blackGroup : blackGroups) {
-      final Set<Cell> unknownNeighbors = new HashSet<>();
+      final Set<Cell> unknownNeighbors = new CellSet(board);
       for (final Cell blackCell : blackGroup) {
         board.getNeighbors(blackCell).filter(Cell::isUnknown)
             .forEach(neighbor -> unknownNeighbors.add(neighbor));
@@ -43,7 +43,7 @@ public class BlackConnectStrategy implements SolverStrategy {
   private boolean pathToOtherGroupExists(Board board, Set<Cell> blackGroup, Cell tabooCell) {
     // "flood fill" starting from one of the blackCells
     final Cell startCell = blackGroup.iterator().next();
-    final Set<Cell> seen = new HashSet<>();
+    final Set<Cell> seen = new CellSet(board);
     final List<Cell> todo = new ArrayList<>();
     todo.add(startCell);
     while (!todo.isEmpty()) {
