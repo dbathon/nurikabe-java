@@ -24,13 +24,7 @@ public class BlackConnectStrategy implements SolverStrategy {
       return;
     }
     for (final Set<Cell> blackGroup : blackGroups) {
-      final Set<Cell> unknownNeighbors = new CellSet(board);
-      for (final Cell blackCell : blackGroup) {
-        board.getNeighbors(blackCell).filter(Cell::isUnknown)
-            .forEach(neighbor -> unknownNeighbors.add(neighbor));
-      }
-
-      for (final Cell unknownNeighbor : unknownNeighbors) {
+      for (final Cell unknownNeighbor : Utils.unknownNeighbors(board, blackGroup)) {
         if (!pathToOtherGroupExists(board, blackGroup, unknownNeighbor)) {
           unknownNeighbor.setBlack();
           // return when one is found, we would need to start from the beginning anyway...

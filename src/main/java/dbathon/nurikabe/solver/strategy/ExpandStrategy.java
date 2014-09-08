@@ -1,7 +1,6 @@
 package dbathon.nurikabe.solver.strategy;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
@@ -35,7 +34,7 @@ public class ExpandStrategy implements SolverStrategy {
         final FixedCell fixedCell = group.iterator().next().getFixedCell();
         if (fixedCell == null || fixedCell.getNumber() > group.size()) {
           if (tryExpand(board, group, CellColor.WHITE)) {
-            // we need to start from the beginning because the black groups could have changed
+            // we need to start from the beginning because the white groups could have changed
             continue outer;
           }
         }
@@ -45,9 +44,7 @@ public class ExpandStrategy implements SolverStrategy {
   }
 
   private boolean tryExpand(Board board, Set<Cell> group, CellColor cellColor) {
-    final Set<Cell> unknownNeighbors =
-        group.stream().flatMap(cell -> board.getNeighbors(cell).filter(Cell::isUnknown))
-            .collect(Collectors.toSet());
+    final Set<Cell> unknownNeighbors = Utils.unknownNeighbors(board, group);
 
     if (unknownNeighbors.size() == 1) {
       unknownNeighbors.iterator().next().setColor(cellColor);

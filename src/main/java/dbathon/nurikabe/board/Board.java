@@ -170,8 +170,10 @@ public class Board implements Iterable<Cell> {
   public Map<FixedCell, Set<Cell>> getWhiteGroupsWithFixedCell() {
     connectWhiteCells();
 
-    return getCells().filter(cell -> cell.getFixedCell() != null).collect(
-        Collectors.groupingBy(Cell::getFixedCell, Collectors.toSet()));
+    return getCells().filter(cell -> cell.getFixedCell() != null)
+        .collect(
+            Collectors.groupingBy(Cell::getFixedCell,
+                Collectors.toCollection(() -> new CellSet(this))));
   }
 
   /**
