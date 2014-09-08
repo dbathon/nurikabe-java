@@ -5,7 +5,6 @@ import java.util.List;
 
 import dbathon.nurikabe.board.Board;
 import dbathon.nurikabe.board.Cell;
-import dbathon.nurikabe.board.CellColor;
 import dbathon.nurikabe.solver.SolverStrategy;
 
 /**
@@ -21,28 +20,11 @@ public class NoBlackBlockStrategy implements SolverStrategy {
             Arrays.asList(board.getCell(x, y), board.getCell(x + 1, y), board.getCell(x, y + 1),
                 board.getCell(x + 1, y + 1));
 
-        if (countColor(blockCells, CellColor.UNKNOWN) == 1
-            && countColor(blockCells, CellColor.BLACK) == 3) {
-          for (final Cell cell : blockCells) {
-            if (cell.isUnknown()) {
-              cell.setWhite();
-              break;
-            }
-          }
+        if (blockCells.stream().filter(cell -> cell.isBlack()).count() == 3) {
+          blockCells.stream().filter(cell -> cell.isUnknown()).forEach(cell -> cell.setWhite());
         }
       }
     }
-
-  }
-
-  private int countColor(List<Cell> cells, CellColor cellColor) {
-    int result = 0;
-    for (final Cell cell : cells) {
-      if (cell.getColor() == cellColor) {
-        ++result;
-      }
-    }
-    return result;
   }
 
 }
