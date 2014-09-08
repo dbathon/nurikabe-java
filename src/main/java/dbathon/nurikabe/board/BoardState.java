@@ -68,7 +68,7 @@ public class BoardState {
   }
 
   public void restoreState() {
-    cellStates.stream().forEach(CellState::restore);
+    cellStates.forEach(CellState::restore);
   }
 
   @Override
